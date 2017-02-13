@@ -1,4 +1,4 @@
-package org.masterupv.carloscupeiro.eventos.main.domain.model;
+package org.masterupv.carloscupeiro.eventos.main.domain.model.model;
 
 import android.app.Application;
 import android.content.Context;

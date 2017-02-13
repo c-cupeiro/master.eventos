@@ -1,15 +1,22 @@
 package org.masterupv.carloscupeiro.eventos.main.view.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.masterupv.carloscupeiro.eventos.R;
 import org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion;
@@ -47,6 +54,20 @@ public class ActividadPrincipal extends AppCompatActivity {
                 databaseReference);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        final SharedPreferences preferencias =
+                getApplicationContext().getSharedPreferences("Temas",
+                        Context.MODE_PRIVATE);
+        if (preferencias.getBoolean("Inicializado", false)==false){
+            final SharedPreferences prefs =
+                    getApplicationContext().getSharedPreferences(
+                            "Temas", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("Inicializado", true);
+            editor.commit();
+            FirebaseMessaging.getInstance().subscribeToTopic("Todos");
+        }
     }
     private boolean comprobarGooglePlayServices() {
         int resultCode = GooglePlayServicesUtil
@@ -86,5 +107,20 @@ public class ActividadPrincipal extends AppCompatActivity {
             }
             extras = null;
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_principal, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_temas) {
+            Intent intent = new Intent(getBaseContext(), Temas.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
