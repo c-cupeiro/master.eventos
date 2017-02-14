@@ -3,6 +3,8 @@ package org.masterupv.carloscupeiro.eventos.main.domain.model;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.mostrarDialogo;
 
 /**
@@ -20,11 +22,11 @@ public class EventosFCMService extends FirebaseMessagingService {
                     remoteMessage.getData().get("ciudad")+"\n";
             evento = evento +"Comentario: "
                     +remoteMessage.getData().get("comentario");
-            mostrarDialogo(getApplicationContext(), evento);
+            mostrarDialogo(getApplicationContext(), evento,remoteMessage.getData().get("evento"));
         } else {
             if (remoteMessage.getNotification() != null) {
                 mostrarDialogo(getApplicationContext(),
-                        remoteMessage.getNotification().getBody());
+                        remoteMessage.getNotification().getBody(),"");
             }
         }
     }

@@ -1,5 +1,7 @@
 package org.masterupv.carloscupeiro.eventos.main.view.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -15,6 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 
 import org.masterupv.carloscupeiro.eventos.R;
 import org.masterupv.carloscupeiro.eventos.main.domain.model.EventoItem;
+import org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion;
+import org.masterupv.carloscupeiro.eventos.main.view.activity.EventoDetalles;
 
 import java.io.InputStream;
 
@@ -74,6 +78,13 @@ public class EventosRecyclerAdapter extends
 
         @Override
         public void onClick(View view) {
+            int position = getAdapterPosition();
+            EventoItem currentItem = (EventoItem) getItem(position);
+            Context context = EventosAplicacion.getAppContext();
+            Intent intent = new Intent(context, EventoDetalles.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("evento", currentItem.getId());
+            context.startActivity(intent);
         }
     }
 

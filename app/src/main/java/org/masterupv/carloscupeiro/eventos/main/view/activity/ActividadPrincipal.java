@@ -101,7 +101,7 @@ public class ActividadPrincipal extends AppCompatActivity {
             evento = evento + "Día: "+ extras.getString("dia")+ "\n";
             evento = evento +"Ciudad: "+extras.getString("ciudad")+ "\n";
             evento = evento +"Comentario: "+extras.getString("comentario");
-            mostrarDialogo(getApplicationContext(), evento);
+            mostrarDialogo(getApplicationContext(), evento,extras.getString("evento"));
             for (String key : extras.keySet()) {
                 getIntent().removeExtra(key);
             }
