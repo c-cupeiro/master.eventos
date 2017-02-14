@@ -9,6 +9,8 @@ import android.os.AsyncTask;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -28,6 +30,8 @@ public class EventosAplicacion extends Application {
     private String ITEMS_CHILD_NAME = "eventos";
     private static DatabaseReference eventosReference;
     private static Context context;
+    private FirebaseStorage storage;
+    private static StorageReference storageRef;
 
     @Override
     public void onCreate() {
@@ -36,6 +40,8 @@ public class EventosAplicacion extends Application {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
         eventosReference = database.getReference(ITEMS_CHILD_NAME);
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://eventos-114fc.appspot.com");
     }
 
     public static Context getAppContext() {
@@ -129,7 +135,7 @@ public class EventosAplicacion extends Application {
         desregistrarDispositivoEnServidorWebTask tarea =
                 new desregistrarDispositivoEnServidorWebTask();
         tarea.contexto=context;
-        tarea.idRegistroTarea="";
+        tarea.idRegistroTarea=dameIdRegistroPreferencias(context);
         tarea.execute();
     }
     public static class desregistrarDispositivoEnServidorWebTask
@@ -176,4 +182,6 @@ public class EventosAplicacion extends Application {
             }
         }
     }
+
+    public static StorageReference getStorageReference() {return storageRef;}
 }
