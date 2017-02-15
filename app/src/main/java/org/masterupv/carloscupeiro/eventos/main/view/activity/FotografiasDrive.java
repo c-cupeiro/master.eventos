@@ -246,10 +246,10 @@ public class FotografiasDrive extends AppCompatActivity {
                     ocultarCarga(FotografiasDrive.this);
                     e.printStackTrace();
                 }catch (Exception e){
+                    mostrarMensaje(FotografiasDrive.this, "Error en el hilo de creación de carpeta;" +
+                            e.getMessage());
                     ocultarCarga(FotografiasDrive.this);
-                    if(carpetaPadre==null){
-                        crearCarpetaEnDrive("EventosDrive","");
-                    }
+                    e.printStackTrace();
                 }
             }
         });
