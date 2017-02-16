@@ -130,15 +130,19 @@ public class FotografiasDrive extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("Preferencias",
                 Context.MODE_PRIVATE);
         nombreCuenta = prefs.getString("nombreCuenta", null);
-        idCarpeta = prefs.getString("idCarpeta", null);
-        idCarpetaEvento = prefs.getString("idCarpeta_"+evento, null);
+        idCarpeta = prefs.getString("idCarpeta", "");
+        idCarpetaEvento = prefs.getString("idCarpeta_"+evento, "");
         if (nombreCuenta != null) {
             credencial.setSelectedAccountName(nombreCuenta);
             servicio = obtenerServicioDrive(credencial);
-            if (idCarpetaEvento==null){
+            if(idCarpeta==""){
                 crearCarpetaEnDrive(evento,idCarpeta);
-            } else {
-                listarFicheros(this.findViewById(android.R.id.content));
+            }else{
+                if (idCarpetaEvento==""){
+                    crearCarpetaEnDrive(evento,idCarpeta);
+                } else {
+                    listarFicheros(this.findViewById(android.R.id.content));
+                }
             }
         } else {
             PedirCredenciales();
@@ -242,11 +246,6 @@ public class FotografiasDrive extends AppCompatActivity {
                     startActivityForResult(e.getIntent(), SOLICITUD_AUTORIZACION);
                 } catch (IOException e) {
                     mostrarMensaje(FotografiasDrive.this, "Error;" +
-                            e.getMessage());
-                    ocultarCarga(FotografiasDrive.this);
-                    e.printStackTrace();
-                }catch (Exception e){
-                    mostrarMensaje(FotografiasDrive.this, "Error en el hilo de creación de carpeta;" +
                             e.getMessage());
                     ocultarCarga(FotografiasDrive.this);
                     e.printStackTrace();
@@ -368,8 +367,10 @@ public class FotografiasDrive extends AppCompatActivity {
         }
     }
 
-    private void mostrarTexto(Context baseContext, String originalFilename) {
-        //mDisplay.setText(mDisplay.getText()+"\n"+originalFilename);
+    static void mostrarTexto(Context contexto, String mensaje) {
+        Intent intent = new Intent(DISPLAY_MESSAGE_ACTION);
+        intent.putExtra("mensaje", mensaje);
+        contexto.sendBroadcast(intent);
     }
 
 }
