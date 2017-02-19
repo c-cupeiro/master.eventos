@@ -55,11 +55,16 @@ public class FotografiasDrive extends AppCompatActivity {
     private static Handler manejador = new Handler();
     private static Handler carga = new Handler();
     private static ProgressDialog dialogo;
+    private Boolean noAutoriza=false;
 
+    //static final String STATIC_DRIVE_FOLDER = "0Bz5W_h3lmQt2OFR6eWZEc2NocTg";//El mio
+    static final String STATIC_DRIVE_FOLDER = "0B0BnNZ_qoOweZGY0NDgySDNqOUk";//El suyo
     static final int SOLICITUD_SELECCION_CUENTA = 1;
     static final int SOLICITUD_AUTORIZACION = 2;
     static final int SOLICITUD_SELECCIONAR_FOTOGRAFIA = 3;
     static final int SOLICITUD_HACER_FOTOGRAFIA = 4;
+    static final int SOLICITUD_SELECCIONAR_FOTOGRAFIA_STATIC = 5;
+    static final int SOLICITUD_HACER_FOTOGRAFIA_STATIC = 6;
     private static Uri uriFichero;
 
     private String idCarpeta="";
@@ -77,6 +82,24 @@ public class FotografiasDrive extends AppCompatActivity {
         setSupportActionBar(toolbar);
         credencial = GoogleAccountCredential.usingOAuth2(this,
                         Arrays.asList(DriveScopes.DRIVE));
+        SharedPreferences prefs = getSharedPreferences("Preferencias", Context.MODE_PRIVATE);
+        nombreCuenta = prefs.getString("nombreCuenta", null);
+        noAutoriza = prefs.getBoolean("noAutoriza",false);
+        idCarpeta = prefs.getString("idCarpeta", null);
+        idCarpetaEvento = prefs.getString("idCarpeta_"+evento, null);
+
+        if (!noAutoriza){
+            if (nombreCuenta == null) {
+                PedirCredenciales();
+            }
+            credencial.setSelectedAccountName(nombreCuenta);
+            servicio = obtenerServicioDrive(credencial);
+            if (idCarpetaEvento==null){
+                crearCarpetaEnDrive(evento, idCarpeta);
+            }else {
+                listarFicheros(this.findViewById(android.R.id.content));
+            }
+        }
         registerReceiver(mHandleMessageReceiver, new
                 IntentFilter(DISPLAY_MESSAGE_ACTION));
         mDisplay = (TextView) findViewById(R.id.txtDisplay);
@@ -92,10 +115,28 @@ public class FotografiasDrive extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_camara:
-                hacerFoto(vista);
+                if (!noAutoriza) {
+                    hacerFoto(vista,SOLICITUD_HACER_FOTOGRAFIA);
+                }
+
                 break;
             case R.id.action_galeria:
-                seleccionarFoto(vista);
+                if (!noAutoriza) {
+                    seleccionarFoto(vista,SOLICITUD_SELECCIONAR_FOTOGRAFIA);
+                }
+
+                break;
+            case R.id.action_camara_static:
+                if (!noAutoriza) {
+                    hacerFoto(vista,SOLICITUD_HACER_FOTOGRAFIA_STATIC);
+                }
+
+                break;
+            case R.id.action_galeria_static:
+                if (!noAutoriza) {
+                    seleccionarFoto(vista,SOLICITUD_SELECCIONAR_FOTOGRAFIA_STATIC);
+                }
+
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -124,30 +165,6 @@ public class FotografiasDrive extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences prefs = getSharedPreferences("Preferencias",
-                Context.MODE_PRIVATE);
-        nombreCuenta = prefs.getString("nombreCuenta", null);
-        idCarpeta = prefs.getString("idCarpeta", "");
-        idCarpetaEvento = prefs.getString("idCarpeta_"+evento, "");
-        if (nombreCuenta != null) {
-            credencial.setSelectedAccountName(nombreCuenta);
-            servicio = obtenerServicioDrive(credencial);
-            if(idCarpeta==""){
-                crearCarpetaEnDrive(evento,idCarpeta);
-            }else{
-                if (idCarpetaEvento==""){
-                    crearCarpetaEnDrive(evento,idCarpeta);
-                } else {
-                    listarFicheros(this.findViewById(android.R.id.content));
-                }
-            }
-        } else {
-            PedirCredenciales();
-        }
-    }
     private void PedirCredenciales() {
         if (nombreCuenta == null) {
             startActivityForResult(credencial.newChooseAccountIntent(),
@@ -171,13 +188,14 @@ public class FotografiasDrive extends AppCompatActivity {
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString("nombreCuenta", nombreCuenta);
                         editor.commit();
-                        crearCarpetaEnDrive("EventosDrive","");
+                        crearCarpetaEnDrive(evento, idCarpeta);
+
                     }
                 }
                 break;
             case SOLICITUD_HACER_FOTOGRAFIA:
                 if (resultCode == Activity.RESULT_OK) {
-                    guardarFicheroEnDrive();
+                    guardarFicheroEnDrive(false);
                 }
                 break;
             case SOLICITUD_SELECCIONAR_FOTOGRAFIA:
@@ -191,16 +209,42 @@ public class FotografiasDrive extends AppCompatActivity {
                     cursor.moveToFirst();
                     uriFichero = Uri.fromFile(
                             new java.io.File(cursor.getString(column_index)));
-                    guardarFicheroEnDrive();
+                    guardarFicheroEnDrive(false);
                 }
                 break;
             case SOLICITUD_AUTORIZACION:
                 if (resultCode == Activity.RESULT_OK) {
-                    crearCarpetaEnDrive("EventosDrive","");
+                    crearCarpetaEnDrive(evento, idCarpeta);
                 } else {
+                    noAutoriza=true;
+                    SharedPreferences prefs = getSharedPreferences("Preferencias",
+                            Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean("noAutoriza", true);
+                    editor.commit();
                     mostrarMensaje(this,"El usuario no autoriza usar Google Drive");
                 }
                 break;
+            case SOLICITUD_HACER_FOTOGRAFIA_STATIC:
+                if (resultCode == Activity.RESULT_OK) {
+                    guardarFicheroEnDrive(true);
+                }
+                break;
+            case SOLICITUD_SELECCIONAR_FOTOGRAFIA_STATIC:
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri ficheroSeleccionado = data.getData();
+                    String[] proyeccion = { MediaStore.Images.Media.DATA };
+                    Cursor cursor = managedQuery(ficheroSeleccionado, proyeccion,
+                            null, null, null);
+                    int column_index =
+                            cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToFirst();
+                    uriFichero = Uri.fromFile(
+                            new java.io.File(cursor.getString(column_index)));
+                    guardarFicheroEnDrive(true);
+                }
+                break;
+
         }
     }
     private Drive obtenerServicioDrive(GoogleAccountCredential credencial) {
@@ -214,30 +258,45 @@ public class FotografiasDrive extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    String idCarpetaPadre = carpetaPadre;
                     mostrarCarga(FotografiasDrive.this, "Creando carpeta...");
+                    //Crear carpeta EventosDrive
+                    if (idCarpeta==null){
+                        File metadataFichero = new File();
+                        metadataFichero.setName("EventosDrive");
+                        metadataFichero.setMimeType("application/vnd.google-apps.folder");
+                        File fichero = servicio.files().create(metadataFichero)
+                                .setFields("id")
+                                .execute();
+                        if (fichero.getId() != null) {
+                            SharedPreferences prefs = getSharedPreferences("Preferencias",
+                                    Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("idCarpeta", fichero.getId());
+                            editor.commit();
+                            idCarpetaPadre=fichero.getId();
+                        }
+                    }
                     File metadataFichero = new File();
                     metadataFichero.setName(nombreCarpeta);
-                    metadataFichero.setMimeType(
-                            "application/vnd.google-apps.folder");
-                    if (!carpetaPadre.equals("")) {
-                        metadataFichero.setParents(
-                                Collections.singletonList(carpetaPadre));
+                    metadataFichero.setMimeType("application/vnd.google-apps.folder");
+                    if (!idCarpetaPadre.equals("")){
+                        metadataFichero.setParents(Collections.singletonList(idCarpetaPadre));
                     }
                     File fichero = servicio.files().create(metadataFichero)
                             .setFields("id")
                             .execute();
                     if (fichero.getId() != null) {
-                        SharedPreferences prefs =
-                                getSharedPreferences("Preferencias",
-                                        Context.MODE_PRIVATE);
+                        SharedPreferences prefs = getSharedPreferences("Preferencias",
+                                Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = prefs.edit();
-                        if (carpetaPadre.equals("")) {
+                        if (idCarpetaPadre.equals("")){
                             editor.putString("idCarpeta", fichero.getId());
                         } else {
-                            editor.putString("idCarpeta_" + evento, fichero.getId());
+                            editor.putString("idCarpeta_"+evento, fichero.getId());
                         }
                         editor.commit();
-                        idCarpeta = fichero.getId();
+                        idCarpeta=fichero.getId();
                         mostrarMensaje(FotografiasDrive.this, "¡Carpeta creada!");
                     }
                     ocultarCarga(FotografiasDrive.this);
@@ -249,12 +308,17 @@ public class FotografiasDrive extends AppCompatActivity {
                             e.getMessage());
                     ocultarCarga(FotografiasDrive.this);
                     e.printStackTrace();
+                } catch (Exception e){
+                    mostrarMensaje(FotografiasDrive.this, "Error;" +
+                            e.getMessage());
+                    ocultarCarga(FotografiasDrive.this);
+                    e.printStackTrace();
                 }
             }
         });
         t.start();
     }
-    public void hacerFoto(View v) {
+    public void hacerFoto(View v, int activityForResul) {
         if (nombreCuenta == null) {
             mostrarMensaje(this,"Debes seleccionar una cuenta de Google Drive");
         } else {
@@ -267,11 +331,11 @@ public class FotografiasDrive extends AppCompatActivity {
                     java.io.File.separator + "IMG_" + timeStamp + ".jpg"));
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriFichero);
-            startActivityForResult(cameraIntent, SOLICITUD_HACER_FOTOGRAFIA);
+            startActivityForResult(cameraIntent, activityForResul);
         }
     }
 
-    public void seleccionarFoto(View v) {
+    public void seleccionarFoto(View v,int activityForResul) {
         if (nombreCuenta == null) {
             mostrarMensaje(this,"Debes seleccionar una cuenta de Google Drive");
         } else {
@@ -279,11 +343,11 @@ public class FotografiasDrive extends AppCompatActivity {
             seleccionFotografiaIntent.setType("image/*");
             seleccionFotografiaIntent.setAction(Intent.ACTION_PICK);
             startActivityForResult(Intent.createChooser(seleccionFotografiaIntent,
-                    "Seleccionar fotografía"),SOLICITUD_SELECCIONAR_FOTOGRAFIA);
+                    "Seleccionar fotografía"),activityForResul);
         }
     }
 
-    private void guardarFicheroEnDrive() {
+    private void guardarFicheroEnDrive(final boolean toStaticShareFolder) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -294,14 +358,22 @@ public class FotografiasDrive extends AppCompatActivity {
                     FileContent contenido = new FileContent("image/jpeg",
                             ficheroJava);
                     File ficheroDrive = new File();
-                    ficheroDrive.setName(ficheroJava.getName());
-                    ficheroDrive.setMimeType("image/jpeg");
-                    ficheroDrive.setParents(
-                            Collections.singletonList(idCarpetaEvento));
+                    if(!toStaticShareFolder){
+                        ficheroDrive.setName(ficheroJava.getName());
+                        ficheroDrive.setMimeType("image/jpeg");
+                        ficheroDrive.setParents(
+                                Collections.singletonList(idCarpetaEvento));
+                    }else{
+                        ficheroDrive.setName("Carlos_Cupeiro");
+                        ficheroDrive.setMimeType("image/jpeg");
+                        ficheroDrive.setParents(
+                                Collections.singletonList(STATIC_DRIVE_FOLDER));
+                    }
                     File ficheroSubido = servicio.files().create(ficheroDrive,
                             contenido).setFields("id").execute();
                     if (ficheroSubido.getId() != null) {
                         mostrarMensaje(FotografiasDrive.this, "¡Foto subida!");
+                        listarFicheros(mDisplay);
                     }
                     ocultarCarga(FotografiasDrive.this);
                 } catch (UserRecoverableAuthIOException e) {

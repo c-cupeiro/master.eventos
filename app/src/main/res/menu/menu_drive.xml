@@ -13,4 +13,14 @@
         android:orderInCategory="101"
         android:title="Elegir imagen"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_camara_static"
+        android:orderInCategory="102"
+        android:title="Compartir foto cámara"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_galeria_static"
+        android:orderInCategory="103"
+        android:title="Compartir foto galería"
+        app:showAsAction="never" />
 </menu>
