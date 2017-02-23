@@ -365,7 +365,7 @@ public class FotografiasDrive extends AppCompatActivity {
                         ficheroDrive.setParents(
                                 Collections.singletonList(idCarpetaEvento));
                     } else {
-                        ficheroDrive.setName("Carlos_Cupeiro");
+                        ficheroDrive.setName("Cupeiro_Duran_Carlos");
                         ficheroDrive.setMimeType("image/jpeg");
                         ficheroDrive.setParents(
                                 Collections.singletonList(STATIC_DRIVE_FOLDER));

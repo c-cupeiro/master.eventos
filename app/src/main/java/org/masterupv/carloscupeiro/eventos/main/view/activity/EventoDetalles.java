@@ -157,6 +157,11 @@ public class EventoDetalles extends AppCompatActivity {
                 intent.putExtra("evento", evento);
                 startActivity(intent);
                 break;
+            case R.id.action_acercaDe:
+                Intent intentWeb = new Intent(getBaseContext(), EventosWeb.class);
+                intentWeb.putExtra("evento", evento);
+                startActivity(intentWeb);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -276,7 +281,7 @@ public class EventoDetalles extends AppCompatActivity {
         }
     }
 
-    public void eliminardeFirebaseStorage(){
+    public void eliminardeFirebaseStorage() {
         String fichero = evento;
         final StorageReference imagenRef =
                 EventosAplicacion.getStorageReference().child(fichero);
@@ -298,7 +303,7 @@ public class EventoDetalles extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 EventosAplicacion.mostrarDialogo(getApplicationContext(),
-                                        "Problemas al borrar el elemento: "+e.getMessage(), "");
+                                        "Problemas al borrar el elemento: " + e.getMessage(), "");
                             }
                         });
                     }
