@@ -1,5 +1,6 @@
 package org.masterupv.carloscupeiro.eventos.main.view.activity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.DownloadListener;
+import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -44,7 +46,9 @@ public class EventosWeb extends AppCompatActivity {
     private String evento;
     private WebView navegador;
     private ProgressDialog dialogo;
+    final InterfazComunicacion miInterfazJava = new InterfazComunicacion(this);
 
+    @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +81,7 @@ public class EventosWeb extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 dialogo.dismiss();
+                navegador.loadUrl("javascript:muestraEvento(\""+evento+"\");");
             }
 
             @Override
@@ -127,6 +132,8 @@ public class EventosWeb extends AppCompatActivity {
                 builder.create().show();
             }
         });
+
+        navegador.addJavascriptInterface(miInterfazJava, "jsInterfazNativa");
     }
 
 
@@ -232,4 +239,17 @@ public class EventosWeb extends AppCompatActivity {
         }
         return true;
     }
+    public class InterfazComunicacion {
+        Context mContext;
+
+        InterfazComunicacion(Context c) {
+            mContext = c;
+        }
+
+        @JavascriptInterface
+        public void volver() {
+            finish();
+        }
+    }
+
 }
