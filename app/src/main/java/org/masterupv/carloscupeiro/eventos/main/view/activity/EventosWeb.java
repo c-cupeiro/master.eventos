@@ -55,15 +55,17 @@ public class EventosWeb extends AppCompatActivity {
         setContentView(R.layout.eventos_web);
         ActivityCompat.requestPermissions(EventosWeb.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         ActivityCompat.requestPermissions(EventosWeb.this, new String[]{android.Manifest.permission.ACCESS_NETWORK_STATE}, 2);
-        if(!comprobarConectividad()){
+        if (!comprobarConectividad()) {
             //Se cierra la actividad si no hay internet
             finish();
         }
         Bundle extras = getIntent().getExtras();
         evento = extras.getString("evento");
-        navegador = (WebView) findViewById(R.id.webkit);navegador.getSettings().setJavaScriptEnabled(true);
+        navegador = (WebView) findViewById(R.id.webkit);
+        navegador.getSettings().setJavaScriptEnabled(true);
         navegador.getSettings().setBuiltInZoomControls(false);
-        navegador.loadUrl("https://eventos-114fc.firebaseapp.com/index.html");
+        navegador.loadUrl("file:///android_asset/index.html");
+        //navegador.loadUrl("https://eventos-114fc.firebaseapp.com/index.html");
         navegador.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -81,7 +83,7 @@ public class EventosWeb extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 dialogo.dismiss();
-                navegador.loadUrl("javascript:muestraEvento(\""+evento+"\");");
+                navegador.loadUrl("javascript:muestraEvento(\"" + evento + "\");");
             }
 
             @Override
@@ -239,6 +241,7 @@ public class EventosWeb extends AppCompatActivity {
         }
         return true;
     }
+
     public class InterfazComunicacion {
         Context mContext;
 

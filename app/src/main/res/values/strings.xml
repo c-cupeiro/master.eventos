@@ -2,4 +2,9 @@
     <string name="app_name">Eventos</string>
     <string name="apiDrive_casa">358027680759-pjk9pbi3ppj4hr74dqh6s9ag7a990lu2.apps.googleusercontent.com</string>
     <string name="apiDrive_curro">358027680759-upmemca6isf9qn5elcv1r1qup7c3e8tc.apps.googleusercontent.com</string>
+    <string name="invitation_title">Envio de una invitación de la app Eventos</string>
+    <string name="invitation_message"> No te pierdas nunca más un evento interesante.</string>
+    <string name="invitation_deep_link"> https://principal.eventos-114fc.firebaseapp.com?descuento=15</string>
+    <string name="invitation_custom_image"> https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png </string>
+    <string name="invitation_cta">Instalar!!</string>
 </resources>

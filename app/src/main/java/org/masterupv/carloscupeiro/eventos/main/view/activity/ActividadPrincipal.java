@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +17,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.android.gms.appinvite.AppInviteInvitationResult;
+import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -40,13 +47,16 @@ import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplic
 import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.mFirebaseRemoteConfig;
 import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.mostrarDialogo;
 
-public class ActividadPrincipal extends AppCompatActivity {
+public class ActividadPrincipal extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.reciclerViewEventos)
     RecyclerView recyclerView;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter adapter;
     private static ActividadPrincipal current;
+    private GoogleApiClient mGoogleApiClient;
+    private static final int REQUEST_INVITE = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +96,30 @@ public class ActividadPrincipal extends AppCompatActivity {
                 new String[]{android.Manifest.permission.CAMERA}, 2);
         ActivityCompat.requestPermissions(ActividadPrincipal.this,
                 new String[]{android.Manifest.permission.GET_ACCOUNTS}, 3);
+
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(AppInvite.API)
+                .enableAutoManage(this, this)
+                .build();
+        boolean autoLaunchDeepLink = true;
+        AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
+                .setResultCallback(new ResultCallback<AppInviteInvitationResult>() {
+            @Override
+            public void onResult(AppInviteInvitationResult result) {
+                if (result.getStatus().isSuccess()) {
+                    Intent intent = result.getInvitationIntent();
+                    String deepLink = AppInviteReferral.getDeepLink(intent);
+                    String invitationId = AppInviteReferral.getInvitationId(intent);
+                    android.net.Uri url = Uri.parse(deepLink);
+                    String descuento = url.getQueryParameter("descuento");
+                    mostrarDialogo(getApplicationContext(),
+                            "Tienes un descuento del "
+                                    + descuento + "% gracias a la invitación: "
+                                    + invitationId,"");
+                }
+            }
+        });
     }
 
     private boolean comprobarGooglePlayServices() {
@@ -145,6 +179,9 @@ public class ActividadPrincipal extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
+        if (id == R.id.action_invitar) {
+            invitar();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -178,6 +215,34 @@ public class ActividadPrincipal extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
                 return;
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "Error al enviar la invitación", Toast.LENGTH_LONG);
+    }
+
+    private void invitar() {
+        Intent intent = new AppInviteInvitation.IntentBuilder(
+                getString(R.string.invitation_title))
+                .setMessage(getString(R.string.invitation_message))
+                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
+                .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
+                .setCallToActionText(getString(R.string.invitation_cta))
+                .build();
+        startActivityForResult(intent, REQUEST_INVITE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+            } else {
+                Toast.makeText(this, "Error al enviar la invitación", Toast.LENGTH_LONG);
             }
         }
     }

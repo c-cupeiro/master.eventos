@@ -80,26 +80,31 @@ public class EventoDetalles extends AppCompatActivity {
         ButterKnife.bind(this);
         Bundle extras = getIntent().getExtras();
         evento = extras.getString("evento");
-        if (evento == null) evento = "";
-        registro = EventosAplicacion.getItemsReference().child(evento);
-        registro.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                EventoItem currentItem = snapshot.getValue(EventoItem.class);
-                txtEvento.setText(currentItem.getEvento());
-                txtCiudad.setText(currentItem.getCiudad());
-                txtFecha.setText(currentItem.getFecha());
-                new DownloadImageTask(
-                        (ImageView) imgImagen).execute(currentItem.getImagen());
-            }
+        if (evento == null) {
+            android.net.Uri url = getIntent().getData();
+            evento = url.getQueryParameter("evento");
+        }
+        if(evento!=null){
+            registro = EventosAplicacion.getItemsReference().child(evento);
+            registro.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    EventoItem currentItem = snapshot.getValue(EventoItem.class);
+                    txtEvento.setText(currentItem.getEvento());
+                    txtCiudad.setText(currentItem.getCiudad());
+                    txtFecha.setText(currentItem.getFecha());
+                    new DownloadImageTask(
+                            (ImageView) imgImagen).execute(currentItem.getImagen());
+                }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                EventosAplicacion.mostrarDialogo(
-                        EventosAplicacion.getAppContext(),
-                        "Ha ocurrido un error al recuperar el registro.", "");
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    EventosAplicacion.mostrarDialogo(
+                            EventosAplicacion.getAppContext(),
+                            "Ha ocurrido un error al recuperar el registro.", "");
+                }
+            });
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
@@ -132,6 +137,7 @@ public class EventoDetalles extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detalles, menu);
+        if (acercaDe==null) acercaDe=true;
         if (!acercaDe) {
             menu.removeItem(R.id.action_acercaDe);
         }
