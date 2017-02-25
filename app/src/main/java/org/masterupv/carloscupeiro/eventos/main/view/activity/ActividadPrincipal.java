@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,9 +18,14 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import org.masterupv.carloscupeiro.eventos.BuildConfig;
 import org.masterupv.carloscupeiro.eventos.R;
 import org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion;
 import org.masterupv.carloscupeiro.eventos.main.view.adapter.EventosRecyclerAdapter;
@@ -29,6 +35,9 @@ import butterknife.ButterKnife;
 
 import static android.R.string.no;
 import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.PLAY_SERVICES_RESOLUTION_REQUEST;
+import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.acercaDe;
+import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.colorFondo;
+import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.mFirebaseRemoteConfig;
 import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.mostrarDialogo;
 
 public class ActividadPrincipal extends AppCompatActivity {
@@ -61,7 +70,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         final SharedPreferences preferencias =
                 getApplicationContext().getSharedPreferences("Temas",
                         Context.MODE_PRIVATE);
-        if (preferencias.getBoolean("Inicializado", false)==false){
+        if (preferencias.getBoolean("Inicializado", false) == false) {
             final SharedPreferences prefs =
                     getApplicationContext().getSharedPreferences(
                             "Temas", Context.MODE_PRIVATE);
@@ -74,10 +83,11 @@ public class ActividadPrincipal extends AppCompatActivity {
                 new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
         ActivityCompat.requestPermissions(ActividadPrincipal.this,
-                new String[]{android.Manifest.permission.CAMERA},2);
+                new String[]{android.Manifest.permission.CAMERA}, 2);
         ActivityCompat.requestPermissions(ActividadPrincipal.this,
-                new String[]{android.Manifest.permission.GET_ACCOUNTS},3);
+                new String[]{android.Manifest.permission.GET_ACCOUNTS}, 3);
     }
+
     private boolean comprobarGooglePlayServices() {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(this);
@@ -92,36 +102,41 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
         return true;
     }
+
     @Override
     protected void onStart() {
         super.onStart();
-        current=this;
+        current = this;
     }
+
     public static ActividadPrincipal getCurrentContext() {
         return current;
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         Bundle extras = getIntent().getExtras();
-        if (extras!=null && extras.keySet().size()>4) {
-            String evento="";
-            evento ="Evento: "+extras.getString("evento")+ "\n";
-            evento = evento + "Día: "+ extras.getString("dia")+ "\n";
-            evento = evento +"Ciudad: "+extras.getString("ciudad")+ "\n";
-            evento = evento +"Comentario: "+extras.getString("comentario");
-            mostrarDialogo(getApplicationContext(), evento,extras.getString("evento"));
+        if (extras != null && extras.keySet().size() > 4) {
+            String evento = "";
+            evento = "Evento: " + extras.getString("evento") + "\n";
+            evento = evento + "Día: " + extras.getString("dia") + "\n";
+            evento = evento + "Ciudad: " + extras.getString("ciudad") + "\n";
+            evento = evento + "Comentario: " + extras.getString("comentario");
+            mostrarDialogo(getApplicationContext(), evento, extras.getString("evento"));
             for (String key : extras.keySet()) {
                 getIntent().removeExtra(key);
             }
             extras = null;
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_principal, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -132,6 +147,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -165,4 +181,5 @@ public class ActividadPrincipal extends AppCompatActivity {
             }
         }
     }
+
 }

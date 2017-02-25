@@ -46,6 +46,8 @@ import java.io.InputStream;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.acercaDe;
+
 /**
  * Created by carlos.cupeiro on 14/02/2017.
  */
@@ -130,6 +132,9 @@ public class EventoDetalles extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detalles, menu);
+        if (!acercaDe) {
+            menu.removeItem(R.id.action_acercaDe);
+        }
         return true;
     }
 
