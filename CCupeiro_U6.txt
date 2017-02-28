@@ -1,0 +1,23 @@
+U6_CCupeiro
+
+Cuenta Gmail: movidilidadcarlos@gmail.com
+URL proyecto: https://console.firebase.google.com/project/eventos-114fc/
+
+Firebase FCM
+------------
+ID_proyecto: eventos-114fc
+API_KEY: AIzaSyDHeAQD5AoAtdun1V4xvpvboF44wgMs9DQ
+
+Dynamic links
+-------------
+Con sobrecarga: https://jt9hq.app.goo.gl/cffF --> SE abre la ventana de detalle del evento de las fallas. Si no tienes la aplicación redirecciona a https://www.androidcurso.com
+sin sobrecarga: https://jt9hq.app.goo.gl/6SuK --> Se abre la ventana de detalle del evento sin nada.
+
+Invites
+-------
+TITULO: No te pierdas nunca más un evento interesante.
+REMITENTE: movidilidadcarlos@gmail.com
+MENSAJE:
+Install(https://jt9hq.app.goo.gl/i/358027680759-acc48575-eeea-40cd-a5ce-8ef09cfce732) this application.
+
+Redirige a la play store y busca la aplicación aunque no la encuentra porque no está publicada

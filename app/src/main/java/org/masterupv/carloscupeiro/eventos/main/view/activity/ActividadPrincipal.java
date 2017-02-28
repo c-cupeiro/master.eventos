@@ -161,7 +161,6 @@ public class ActividadPrincipal extends AppCompatActivity implements GoogleApiCl
             for (String key : extras.keySet()) {
                 getIntent().removeExtra(key);
             }
-            extras = null;
         }
     }
 
@@ -181,6 +180,11 @@ public class ActividadPrincipal extends AppCompatActivity implements GoogleApiCl
         }
         if (id == R.id.action_invitar) {
             invitar();
+        }
+        if(id == R.id.action_send_notification){
+            Intent intent = new Intent(getBaseContext(), SendNotification.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

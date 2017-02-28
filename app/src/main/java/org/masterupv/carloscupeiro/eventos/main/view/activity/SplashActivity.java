@@ -70,7 +70,8 @@ public class SplashActivity extends AppCompatActivity {
                             TextView advice = (TextView) findViewById(R.id.tv_advertencia);
                             advice.setVisibility(View.VISIBLE);
                         }
-                        welcomeThread.start();
+                        if(!welcomeThread.isAlive())
+                            welcomeThread.start();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -83,7 +84,8 @@ public class SplashActivity extends AppCompatActivity {
                             TextView advice = (TextView) findViewById(R.id.tv_advertencia);
                             advice.setVisibility(View.VISIBLE);
                         }
-                        welcomeThread.start();
+                        if(!welcomeThread.isAlive())
+                            welcomeThread.start();
                     }
                 });
     }

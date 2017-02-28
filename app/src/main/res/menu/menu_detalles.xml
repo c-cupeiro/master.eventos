@@ -31,6 +31,11 @@
     <item
         android:id="@+id/action_acercaDe"
         android:orderInCategory="104"
-        android:title="Acerca de"
+        android:title="Acerca de(JQuery)"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_acercaDe_Firebase"
+        android:orderInCategory="105"
+        android:title="Acerca de(Firebase)"
         app:showAsAction="never" />
 </menu>

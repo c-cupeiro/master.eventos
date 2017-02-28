@@ -9,6 +9,11 @@
         android:title="Suscripciones"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_send_notification"
+        android:orderInCategory="101"
+        android:title="Enviar notificación"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_invitar"
         android:orderInCategory="50"
         android:title="Invitar"

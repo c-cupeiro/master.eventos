@@ -1,0 +1,49 @@
+Ejercicios:
+Unidad 5: Servicios en la nube
+(X) Ejercicio: Enviar notificaciones push desde Firebase Console. (1 punto)
+(X) Ejercicio: Administrar notificaciones push en una aplicación Android.
+(X) Ejercicio: Administrar notificaciones push con carga de datos en una aplicaciónAndroid. (1 puntos)
+(X) Ejercicio: Administrar los identificadores FCM en Android. (1 punto)
+(X) Ejercicio: Suscribir y dar de baja a usuarios en temas en FCM. (1 puntos)
+(X) Ejercicio: Restringir el envio de notificaciones mediante temas. (1 punto)
+(X) Ejercicio: Desregistrar un dispositivo en un servidor propio FCM. (1 punto)
+(X) Ejercicio: Personalizar una notificación FCM recibida en la bandeja del sistema. (1 punto)
+(X) Ejercicio: Abrir una actividad determinada desde una notificación. (1 punto)
+(X) Ejercicio: Usar Firebase Storage en una aplicación Android (1 punto)
+(X) Ejercicio: Subir datos a Firebase Storage desde una aplicación Android. (1 punto)
+(X) Ejercicio: Habilitar el servicio Drive en Google API Console.
+(X) Ejercicio: Preparar la aplicación para usar la API de Google Drive.
+(X) Ejercicio: Obtener acceso a Google Drive. (1 punto)
+(X) Ejercicio: Crear carpetas en Google Drive. (1 punto)
+(X) Ejercicio: Subir un fichero a Google Drive. (1 punto)
+(X) Ejercicio: Listar los nombres de las fotografías subidas en un TextView. (1 punto)
+(X) Utilizar Autobackup en la aplicación. Excluir preferencias. (1 punto)
+Unidad 6: Aplicaciones web en Android
+(X) Ejercicio: Crear una aplicación web. (1 punto)
+(X) Ejercicio: Aplicación web en Firebase Hosting. (1 punto)
+(X) Ejercicio: Histórico de implementaciones y reversiones en Firebase Hosting. (1 punto)
+(X) Ejercicio: Abrir contenido web en línea en un WebView. (1 punto)
+(X) Práctica: Integrar EventosWeb en Eventos. (1 punto)
+(X) Ejercicio: Comunicación webview-Android (1 punto)
+(X) Ejercicio: Comunicación WebView-Android. (1 punto)
+(X) Ejercicio: Configuración remota en Android. (1 punto)
+(X) Ejercicio: Utilizar jQuery Mobile en la aplicación Eventos. (1 punto)
+(X) Ejercicio: Sustituir TextView por WebView en FotografiasDrive. (1 punto)
+(X) Ejercicio: Crear un vínculo dinámico en Firebase. (1 punto)
+(X) Ejercicio: Abrir un vínculo dinámico en Android. (1 punto)
+(X) Ejercicio: Abrir un vínculo dinámico con sobrecarga de datos en Android. (1 punto)
+(X) Ejercicio: Enviar invitaciones con Firebase Invites. (1 punto)
+(X) Ejercicio: Enviar invitaciones con Firebase Invites con sobrecarga de datos (1 punto)
+Extras:
+Unidad 5: Servicios en la nube
+(X) Práctica: Notificaciones ampliadas (1 punto)
+(_) Ejercicio: Crear la aplicación del servidor con PHP y mySQL. [OPCIONAL] (2 puntos)
+(X) Práctica: Enviar notificaciones desde la aplicación (2 punto)
+(X) Práctica: Eliminar archivos en Firebase Storage (2 punto)
+(X) Práctica: Subir fotografías a una carpeta compartida (1 punto)
+(X) Reto: Estoy aquí en plazo (3 puntos)
+(_) Reto: Estoy aquí fuera de plazo (1 punto)
+Unidad 6: Aplicaciones web en Android
+(X) Práctica: Configuración remota según país (1 puntos)
+(_) Práctica: Campaña de descuento en evento (1 puntos)
+(X) Entregado apk, zip con código y txt con todos los datos. (1 punto)

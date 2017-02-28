@@ -37,6 +37,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.masterupv.carloscupeiro.eventos.R.layout.evento;
+import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.acercaDe;
+import static org.masterupv.carloscupeiro.eventos.main.domain.model.EventosAplicacion.colorFondo;
 
 /**
  * Created by Carlos on 23/02/2017.
@@ -64,8 +66,11 @@ public class EventosWeb extends AppCompatActivity {
         navegador = (WebView) findViewById(R.id.webkit);
         navegador.getSettings().setJavaScriptEnabled(true);
         navegador.getSettings().setBuiltInZoomControls(false);
-        navegador.loadUrl("file:///android_asset/index.html");
-        //navegador.loadUrl("https://eventos-114fc.firebaseapp.com/index.html");
+        if(extras.getBoolean("web")){
+            navegador.loadUrl("https://eventos-114fc.firebaseapp.com/index.html");
+        }else{
+            navegador.loadUrl("file:///android_asset/index.html");
+        }
         navegador.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -84,6 +89,7 @@ public class EventosWeb extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 dialogo.dismiss();
                 navegador.loadUrl("javascript:muestraEvento(\"" + evento + "\");");
+                navegador.loadUrl("javascript:colorFondo(\""+colorFondo+"\");");
             }
 
             @Override
